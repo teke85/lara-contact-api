@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Contact;
+use App\Models\Favourite;
 use App\Models\User;
-
+use App\Policies\FavouritePolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -16,7 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        Favourite::class => FavouritePolicy::class
     ];
 
     /**

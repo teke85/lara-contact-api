@@ -22,7 +22,7 @@ class ContactFactory extends Factory
         return [
 
             'name' => fake()->name(),
-            'user_id' => rand(0, $latestUser),
+            'user_id' => rand(1, $latestUser),
             "country_code" => '95',
 
             'phone_number' => fake()->phoneNumber()

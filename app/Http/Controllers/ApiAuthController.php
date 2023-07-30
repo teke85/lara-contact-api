@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 
 class ApiAuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(Request $request): JsonResponse
     {
         $request->validate([
             "name" => "required|min:3",
@@ -54,7 +55,7 @@ class ApiAuthController extends Controller
         return Auth::user()->createToken("iphone");
     }
 
-    public function logout()
+    public function logout(): JsonResponse
     {
         Auth::user()->currentAccessToken()->delete();
         return response()->json(
@@ -66,7 +67,7 @@ class ApiAuthController extends Controller
     }
 
 
-    public function logOutAll()
+    public function logOutAll(): JsonResponse
     {
         foreach (Auth::user()->tokens as $token) {
             $token->delete();
@@ -84,7 +85,7 @@ class ApiAuthController extends Controller
         return Auth::user()->tokens;
     }
 
-    public  function reset(Request $request)
+    public  function reset(Request $request): JsonResponse
     {
         $optCode = rand(111111, 999999);
 
@@ -100,7 +101,7 @@ class ApiAuthController extends Controller
         ]);
     }
 
-    public function newPw(Request $request)
+    public function newPw(Request $request): JsonResponse
     {
         $getUsr = User::where('email', '=', $request->email)->firstOrFail();
         if (!$getUsr->otp == $request->otp) {
@@ -118,5 +119,31 @@ class ApiAuthController extends Controller
     public function makeVerify(Request $request)
     {
         return $request;
+    }
+
+
+    public function userProfile()
+    {
+
+        $user = User::findOrFail(Auth::id());
+
+        $data = [
+            'current_pw' => $user->CurrentPassword(),
+            'my_contact' => $user->Contacts,
+            'my_fav' => $user->Favourites,
+            'my_search' => $user->SearchRecords
+        ];
+        return $data;
+    }
+
+    public function DeleteAccount()
+    {
+        foreach (Auth::user()->tokens as $token) {
+            $token->delete();
+        };
+        User::where('id', Auth::id())->delete();
+        return response()->json([
+            'message' => 'you account has been delete '
+        ]);
     }
 }

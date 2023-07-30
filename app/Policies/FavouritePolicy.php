@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Contact;
 use App\Models\Favourite;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -27,9 +28,10 @@ class FavouritePolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user, Contact  $contact): bool
     {
-        //
+        // return $user->id == $contact->user_id;
+        return true;
     }
 
     /**
@@ -45,7 +47,7 @@ class FavouritePolicy
      */
     public function delete(User $user, Favourite $favourite): bool
     {
-        //
+        return $user->id == $favourite->user_id;
     }
 
     /**

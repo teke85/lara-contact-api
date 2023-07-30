@@ -18,13 +18,14 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('country_code');
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('phone_number');
             $table->string('email')->nullable();
             $table->string('company')->nullable();
             $table->string('job_title')->nullable();
             $table->string('birth_day')->nullable();
             $table->string('photo')->default(config('info.default_contact_photo'));
+            $table->softDeletes();
             $table->text('notes')->nullable();
 
 

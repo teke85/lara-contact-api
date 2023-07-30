@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\Database\Eloquent\Builder;
 
 
 use App\Http\Resources\ContactDetailsResource;
@@ -12,36 +11,64 @@ use App\Models\SearchRecord;
 // use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
+
+use App\Http\Resources\ContactDetailResource;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Termwind\Components\Dd;
+use PhpParser\Node\Expr\FuncCall;
+use Symfony\Component\CssSelector\Node\FunctionNode;
 
 class ContactController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    // public function index()
+    // {
+
+
+    //     $contacts = Contact::latest("id")->paginate(5)->withQueryString();
+    //     return ContactResource::collection($contacts);
+
+    //     // $contacts = Contact::when(request()->has("keyword"), function ($query) {
+    //     //     $query->where(function (Builder $builder) {
+    //     //         $keyword = request()->keyword;
+
+    //     //         $builder->where("title", "like", "%" . $keyword . "%");
+    //     //         $builder->orWhere("description", "like", "%" . $keyword . "%");
+    //     //     });
+    //     // })->get();
+
+
+
+
+
+
+    // }
+
+
+    public function index()
+
     {
 
+        $contacts = Contact::when(request()->has("keyword"), function ($query) {
 
-        // $contacts = Contact::all();
+            $query->where(function (Builder $builder) {
 
+                $keyword = request()->keyword;
 
-        $contacts = Contact::when(
-            $request->has("keywords"),
-            function (Builder $query) {
-                $query->where(function (Builder $builder) {
-
-                    $keywords =  request()->has("keywords");
-
-
-                    $builder->where("name", "like", "%" . $keywords . "%")
-                        ->orWhere("number", "like", "%" . $keywords . "%");
-                });
-            }`
-        )
-            // ->where('user_id', '=', Auth::id())->paginate(5)
-            ->all();
+                $builder->where("name", "like", "%" . $keyword . "%");
+                $builder->orWhere("phone_number", "like", "%" . $keyword . "%");
+                SearchRecord::create(
+                    [
+                        'user_id' => Auth::id(),
+                        'keywords' => request()->keyword
+                    ]
+                );
+            });
+        })->where('user_id', '=', Auth::id())->latest("id")
+            ->paginate(7)->withQueryString();
         return ContactResource::collection($contacts);
     }
 
@@ -50,6 +77,7 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate(
             [
                 'name' => 'required',
@@ -60,17 +88,24 @@ class ContactController extends Controller
         $contact = Contact::create([
             "name" => $request->name,
             "country_code" => $request->country_code,
-            "phone_number" => $request->phone_number
+            "phone_number" => $request->phone_number,
+            'user_id' => Auth::id()
         ]);
+
+
         return new ContactDetailsResource($contact);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, Request $request)
     {
+        if ($request->restore == true) {
+            Contact::withTrashed()->findOrFail($id)->restore();
+        }
         $contact = Contact::findOrFail($id);
+
         if (is_null($contact)) {
             return response()->json([
                 'message' => 'contact not found'
@@ -119,7 +154,7 @@ class ContactController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
 
 
@@ -139,7 +174,7 @@ class ContactController extends Controller
         ], 200);
     }
 
-    public function multipleDelete(Request $request)
+    public function multipleDelete(Request $request): JsonResponse
 
     {
         // return $request;
@@ -154,15 +189,35 @@ class ContactController extends Controller
     }
 
 
-    public function forceDelete($id)
+
+
+    public function forceDelete($id): JsonResponse
     {
 
-        $contact = SearchRecord::withTrashed()->findOrFail($id);
+        $contact = Contact::withTrashed()->findOrFail($id);
 
-        $contact->tags()->detach();
+        if (Gate::denies('custom-validate', $contact)) {
+            return response()->json([
+                'message' => "action invalid"
+            ], 200);
+        }
         $contact->forceDelete();
         return response()->json([
-            'message' => "contacts is  deleted"
+            'message' => "contacts is  force deleted"
+        ], 200);
+    }
+
+
+    public function GetMYFavs()
+    {
+    }
+
+
+    public function ForceDeleteAll()
+    {
+        Contact::where('user_id', Auth::id())->forceDelete();
+        return response()->json([
+            'message' => "All contacts    force deleted"
         ], 200);
     }
 }

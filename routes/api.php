@@ -2,9 +2,13 @@
 
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\FavouriteController;
+use App\Http\Controllers\SearchRecordController;
 use App\Http\Middleware\ApiTokenKey;
+use App\Models\Favourite;
 use App\Models\SearchRecord;
 use Illuminate\Http\Request;
+use Illuminate\Routing\RouteRegistrar;
 use Illuminate\Support\Facades\Route;
 use PharIo\Manifest\AuthorCollection;
 // include '../app/test.php'
@@ -28,13 +32,17 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
 
         Route::apiResource('contact', ContactController::class);
-        Route::apiResource('search-record', SearchRecord::class)->only(['index', 'delete']);
+        Route::get('user-profile', [ApiAuthController::class, 'userProfile']);
+        Route::get('delete-account', [ApiAuthController::class, 'DeleteAccount']);
+
+        Route::get('force-delete-all', [ContactController::class, 'ForceDeleteAll']);
+        // Route::get('get-my-favs', [ContactController::class, 'GetMYFavs']);
+        Route::post("contact/force-delete/{id}", [ContactController::class, 'forceDelete']);
+        Route::apiResource('search-record', SearchRecordController::class);
+        Route::apiResource('favourite', FavouriteController::class);
         Route::post('multiple-delete', [ContactController::class, 'multipleDelete']);
         Route::post('logout', [ApiAuthController::class, 'logout']);
-
-
-        Route::post('devices', [ApiAuthController::class, '
-    ']);
+        Route::post('devices', [ApiAuthController::class, 'devices']);
         Route::post('logout-all', [ApiAuthController::class, 'logOutAll']);
     });
 

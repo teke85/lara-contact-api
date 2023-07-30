@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contact;
+
+
 use App\Models\Favourite;
 use App\Http\Requests\StoreFavouriteRequest;
 use App\Http\Requests\UpdateFavouriteRequest;
-use GuzzleHttp\Psr7\Request;
+use App\Models\User;
+use \Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+
 
 class FavouriteController extends Controller
 {
@@ -15,7 +20,12 @@ class FavouriteController extends Controller
      */
     public function index()
     {
-        //
+        $user = User::findOrFail(Auth::id());
+        $favs =   $user->Favourites;
+        // $favs = Favourite::all();
+        return response()->json([
+            'message' => $favs
+        ], 200);
     }
 
     /**
@@ -29,8 +39,16 @@ class FavouriteController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreFavouriteRequest $request)
+    public function store(StoreFavouriteRequest $request): JsonResponse
     {
+        $contact = Contact::findOrFail($request->contact_id);
+        // return $contact;
+        $this->authorize('create', [Favourite::class, $contact]);
+        // if (Gate::denies('custom-validate', $contact)) {
+        //     return response()->json([
+        //         'message' => "action invalid"
+        //     ], 200);
+        // }
         Favourite::create([
             'user_id' => Auth::id(),
             'contact_id' => $request->contact_id
@@ -68,9 +86,11 @@ class FavouriteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Favourite $favourite)
+    public function destroy(string $id)
     {
-        $delHistory = $favourite->findOrFail($request->id);
+
+        $delHistory = Favourite::findOrFail($id);
+
         $delHistory->delete();
 
         return response()->json([

@@ -15,7 +15,13 @@ class SearchRecordController extends Controller
      */
     public function index()
     {
-        return   SearchRecord::where('user_id', '=', Auth::id())->latest()->paginate(5)->all();
+
+        // dd(SearchRecord::all());
+
+        $searchRecords =  SearchRecord::where('user_id', '=', Auth::id())->get();
+        return response()->json([
+            'message' => $searchRecords
+        ], 200);
     }
 
     /**
@@ -32,10 +38,10 @@ class SearchRecordController extends Controller
     public function store(StoreSearchRecordRequest $request)
     {
 
-        SearchRecord::created([
-            'user_id' => Auth::id(),
-            'keywords' => request()->keywords
-        ]);
+        // SearchRecord::created([
+        //     'user_id' => Auth::id(),
+        //     'keywords' => request()->keywords
+        // ]);
     }
 
     /**
@@ -65,9 +71,12 @@ class SearchRecordController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SearchRecord $searchRecord, Request $request)
+    public function destroy(string $id)
     {
-        $delHistory = $searchRecord->findOrFail($request->id);
+        $delHistory = SearchRecord::findOrFail($id);
         $delHistory->delete();
+        return response()->json([
+            'message' => "delete successfully"
+        ], 200);
     }
 }
