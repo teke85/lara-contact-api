@@ -34,6 +34,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('contact', ContactController::class);
         Route::get('user-profile', [ApiAuthController::class, 'userProfile']);
         Route::get('delete-account', [ApiAuthController::class, 'DeleteAccount']);
+        Route::get('restore-all', [ContactController::class, 'RestoreAll']);
 
         Route::get('force-delete-all', [ContactController::class, 'ForceDeleteAll']);
         // Route::get('get-my-favs', [ContactController::class, 'GetMYFavs']);
@@ -53,3 +54,8 @@ Route::prefix('v1')->group(function () {
     Route::post('reset', [ApiAuthController::class, 'reset']);
     Route::post('new-pw', [ApiAuthController::class, 'newPw']);
 });
+
+
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');

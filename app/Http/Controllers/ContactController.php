@@ -212,6 +212,14 @@ class ContactController extends Controller
     {
     }
 
+    public function RestoreAll()
+    {
+
+        Contact::withTrashed()->restore();
+        return response()->json([
+            'message' => "all restore is restored "
+        ], 200);
+    }
 
     public function ForceDeleteAll()
     {

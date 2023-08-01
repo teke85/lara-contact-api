@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Auth\Events\Registered;
+
 
 
 
@@ -28,6 +30,8 @@ class ApiAuthController extends Controller
             "password" => Hash::make($request->password)
         ]);
 
+
+        event(new Registered($user));
 
         return response()->json([
             "message" => "User register successful",
