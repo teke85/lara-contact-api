@@ -4,7 +4,7 @@
 Contact App API for testing 
 
 
-## API Reference
+# Account Crud 
 
 #### Login (Post)
 
@@ -14,9 +14,9 @@ Contact App API for testing
 
 | Arguments | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `email` | `string` | **Required** htut@gmail.com
+| `email` | `string` | **Required** 
  |
-| `password` | `string` | **Required** 1111 |
+| `password` | `string` | **Required**  |
 
 
 #### Register (Post)
@@ -27,12 +27,108 @@ Contact App API for testing
 
 | Arguments | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `name` | `string` | **Required** htut |
-| `email` | `string` | **Required** htut@gmail.com |
-| `password` | `string` | **Required** 1111 |
-| `password_confirmation` | `string` | **Required** 1111 |
+| `name` | `string` | **Required**  |
+| `email` | `string` | **Required**  |
+| `password` | `string` | **Required**  |
+| `password_confirmation` | `string` | **Required**  |
 
 
+### rest  Password (POST)
+
+```http
+   {{base_url}}/reset
+```
+| Arguments | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `emai` | `string` | **Required**  |
+
+### Change Password (POST)
+
+```http
+   {{base_url}}/new-pw
+```
+
+| Arguments | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `new_password` | `string` | **Required**  |
+| `password` | `string` | **Required**  |
+| `email` | `string` | **Required**   |
+| `otp` | `string` | **Required**  |
+
+
+### New Password    (POST)
+
+```http
+   {{base_url}}/new-pw
+```
+
+| Arguments | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `new_password` | `string` | **Required** |
+| `password` | `string` | **Required**  |
+| `email` | `string` | **Required**  m |
+| `otp` | `string` | **Required**  |
+
+
+
+## Profile
+
+### user-profile (POST)
+
+```http
+ {{base_url}}/user-profile
+
+```
+
+
+### Get User devices (GET)
+
+```http
+  {{base_url}}/devices
+```
+
+
+
+
+### Logout (POST)
+
+```http
+   {{base_url}}/logout
+```
+
+### Logout All  (POST)
+
+```http
+   {{base_url}}/logout-all
+```
+
+
+
+### Delete  Account  (GET)
+
+```http
+   {{base_url}}/delete-account
+```
+
+
+### Search Record 
+
+
+
+### Search   Record  (GET)
+
+```http
+   {{base_url}}/search-record
+```
+### Search   Record  (Delete)
+
+```http
+  {{base_url}}/search-record/{id}
+```
+
+
+
+## Contact Crud -------------------------------
 
 
 ### Get Contacts (Get)
@@ -56,22 +152,40 @@ Contact App API for testing
 
 | Arguments | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `name` | `string` | **Required** Post Malone |
-| `country_code` | `integer` | **Required** +959 |
-| `phone_number` | `string` | **Required** post@gmail.com |
+| `name` | `string` | **Required**  |
+| `country_code` | `integer` | **Required** |
+| `phone_number` | `string` | **Required**  |
 
 
 ### Update Contact(PUT)
 
 ```
-  {{base_url}}/contact/2
+  {{base_url}}/contact/{id}
 ```
   #### You can update with only singe Parameter or more
 | Arguments | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `name` | `string` | **Required** Post Malone |
-| `country_code` | `integer` | **Required** +959 |
-| `phone_number` | `string` | **Required** post@gmail.com |
+| `name` | `string` | **Required**  |
+| `country_code` | `integer` | **Required**  |
+| `phone_number` | `string` | **Required**  |
+
+
+
+### Partial  Update Contact(Patch)
+
+```
+  {{base_url}}/contact/{id}
+```
+  #### You can update with only singe Parameter or more
+| Arguments | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `name` | `string` | **optional**  |
+| `country_code` | `integer` | **optional**  |
+| `phone_number` | `string` | **optional**  |
+
+
+
+
 
 ### Delete Contact (DELETE)
 
@@ -81,53 +195,36 @@ Contact App API for testing
 
 
 
-
-
-
-
-
-### Get User devices (GET)
+### Force Delete Contact     (DELETE)
 
 ```http
-  {{base_url}}/devices
+ {{base_url}}/force-delete-all
 ```
 
-### rest  Password (POST)
+### Restore All  (GET)
 
 ```http
-   {{base_url}}/reset
-```
-| Arguments | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `emai` | `string` | **Required** htut@gmail.com |
-
-### Change Password (POST)
-
-```http
-   {{base_url}}/new-pw
+ {{base_url}}/restore-all
 ```
 
-| Arguments | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `new_password` | `string` | **Required** 1111 |
-| `password` | `string` | **Required** 1111 |
-| `email` | `string` | **Required**  htut@gmail.com |
-| `otp` | `string` | **Required**  12345678|
-
-
-
-### Logout (POST)
+### Multiple Delete  (POST)
 
 ```http
-   {{base_url}}/logout-all
+ {{base_url}}/multiple-delete
+```
+
+
+### Multiple Delete  (GET)
+
+```http
+ {{base_url}}/contact/restore/{id}
 ```
 
 
 
-### Another Features 
 
 
-
+## fav crud ---------------------------------
 ### add favourite  (POST)
 
 ```http
@@ -136,10 +233,10 @@ Contact App API for testing
 
 | Arguments | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `new_password` | `string` | **Required** 1111 |
-| `password` | `string` | **Required** 1111 |
-| `email` | `string` | **Required**  htut@gmail.com |
-| `otp` | `string` | **Required**  12345678|
+| `new_password` | `string` | **Required**  |
+| `password` | `string` | **Required**  |
+| `email` | `string` | **Required**   |
+| `otp` | `string` | **Required**  |
 
 
 ### delete favourite  (POST)
@@ -157,19 +254,4 @@ Contact App API for testing
 
 
 
-### delete user account   (GET)
-
-```http
- {{base_url}}/delete-account
-```
-
-|you just need to login   |
-
-
-### user-profile (POST)
-
-```http
- {{base_url}}/user-profile
-
-```
 
